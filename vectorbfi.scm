@@ -6,12 +6,12 @@
 ;   FILE_NAME     open the source file and execute it
 
 (import
-  (chicken io)              ;; call-with-input-file
-  (chicken process-context) ;; command-line-arguments
-  (chicken string)          ;; string-compare3
-  (srfi-4)                  ;; u8vector
-  (srfi-18)                 ;; thread-sleep!
-  (srfi-48))                ;; format
+  (chicken io) ;; call-with-input-file -- for Gauche, comment out here
+  (srfi-4)     ;; u8vector
+  (srfi-13)    ;; string=
+  (srfi-18)    ;; thread-sleep!
+  (srfi-48)    ;; format
+  (srfi-193))  ;; command-args
 
 ; file name -> list of bf chars
 (define file2chars
@@ -22,9 +22,9 @@
         (let loop ([line (read-line input-file)]
                    [chars '()])
           (if (eof-object? line)
-              chars
-              (loop (read-line input-file)
-                    (append chars (string->list line)))))))))
+            chars
+            (loop (read-line input-file)
+                  (append chars (string->list line)))))))))
 
 ;; list of characters -> vector of 8bit unsigned integer
 (define chars2u8vec
@@ -34,22 +34,22 @@
 ; Brainf*ck code as u8vector
 (define bf
   (delay
-    (let loop ([left (command-line-arguments)])
+    (let loop ([left (command-args)])
       (if (= (length left) 1)
-          (chars2u8vec (file2chars (car left)))
-          (if (zero? (string-compare3 "-c" (car left)))
-              (chars2u8vec (string->list (list-ref left 1)))
-              (loop (cdr left)))))))
+        (chars2u8vec (file2chars (car left)))
+        (if (string= "-c" (car left))
+          (chars2u8vec (string->list (list-ref left 1)))
+          (loop (cdr left)))))))
 
 ; wait time [seconds] for debug...?
 (define wait
   (delay
-    (let loop ([left (command-line-arguments)])
+    (let loop ([left (command-args)])
       (if (null? left)
-          0
-          (if (zero? (string-compare3 "-w" (car left)))
-              (string->number (list-ref left 1))
-              (loop (cdr left)))))))
+        0
+        (if (string= "-w" (car left))
+          (string->number (list-ref left 1))
+          (loop (cdr left)))))))
 
 ; adjust the value to 1 byte
 (define overflow
