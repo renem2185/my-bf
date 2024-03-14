@@ -70,7 +70,10 @@
 
 ; assemble new memory state (hiding side effect!)
 (define insert_value
-  (lambda (old_mem ptr value new_len) 
+  (lambda (old_mem   ;; old memory before processing
+            ptr      ;; data pointer
+            value    ;; processed value by "operate2value"
+            new_len) ;; new length of memory 
     (let loop ([new_mem (make-u8vector new_len 0)]
                [count 0])
       (if (<= new_len count)
@@ -104,7 +107,7 @@
                           (u8vector-length memory))
         (new_memory (insert_value memory          ;; reallocate and retry
                                   data_ptr
-                                  0               ;; natural value
+                                  0               ;; should be zero
                                   (+ data_ptr 1))
                     data_ptr
                     inst)))))
@@ -213,7 +216,7 @@
                        (new_inst_ptr inst_ptr
                                      (if (< data_ptr (u8vector-length memory))
                                          (u8vector-ref memory data_ptr)
-                                         0)) ;; un-initialised
+                                         0)) ;; should be zero
                        (+ step 1)))))))
 
 (define main
