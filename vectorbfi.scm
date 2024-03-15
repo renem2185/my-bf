@@ -143,7 +143,7 @@
                [sign toward]) ;; 1 or -1
       (cond
         ((or (< ptr 0) (<= (u8vector-length (force bf)) ptr))
-         -1) ;; ERROR STOP
+         (- -1 1)) ;; ERROR STOP
         ((and (= 93 (u8vector-ref (force bf) ptr)) ;; ]
               (and (= sign 1) (zero? nest)))
          ptr)
