@@ -1,6 +1,9 @@
 # my-bf
 Learning Scheme language with imprementation Brainf*ck
 
+## [Play here!](https://renem2185.github.io/bf/vectorbfi.html)
+See also -> https://gist.github.com/renem2185/eb907c6b0f554f95de929420d7d20a77
+
 ## メモ書き (Japanese)
 自分で遊ぶときは [Chicken Scheme](http://www.call-cc.org/) でコンパイルしていましたが、
 少しいじれば他の環境でも動くと思います (たぶん)
