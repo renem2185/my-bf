@@ -26,6 +26,9 @@
             (loop (read-line input-file)
                   (append chars (string->list line)))))))))
 
+;; FOR WASM: stdout buffer
+(define outbuf! "")
+
 ;; list of characters -> vector of 8bit unsigned integer
 (define chars2u8vec
   (lambda (chars)
@@ -176,8 +179,10 @@
 (define interrupt
   (lambda (memory data_ptr inst_ptr step) ;; state of vm
     (cond
-      ((= 46 (u8vector-ref (force bf) inst_ptr)) ;; .
-       (display (integer->char (u8vector-ref memory data_ptr))))
+      ((= 46 (u8vector-ref (force bf) inst_ptr)) ;; "."
+       ;; (display (integer->char (u8vector-ref memory data_ptr))))
+       (set! outbuf! (string-append outbuf! 
+                                    (string (integer->char (u8vector-ref memory data_ptr))))))
       ((not (zero? (force wait)))
        (begin
          (thread-sleep! (force wait))
@@ -226,5 +231,6 @@
                  0            ;; Instructon pointer
                  0)))         ;; Step count
 (main)
+(print outbuf!)
 
 
